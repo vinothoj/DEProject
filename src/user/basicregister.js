@@ -22,7 +22,7 @@ class App extends React.Component {
 		this.state = {
 			id: '1', username: '', email: '', password: '', repassword: '', mobile: '', isAgree: false, isError: false, isLoad: false,
 			error: { username: '', email: '', password: '', repassword: '', mobile: '', isAgree: '' },
-			modalopen: false, successMsg: '', isSignup: true, verifySignup : false
+			modalopen: false, successMsg: '', isSignup: true, verifySignup : false, errorMessage: ''
 		}
 	}
 	onChange = (e) => {
@@ -98,6 +98,10 @@ class App extends React.Component {
 			
 		}, error => {
 			console.log("user add error:",error);
+			this.setState({
+				isLoad: false,
+				errorMessage: error.message,
+			});
 		});
 	};
 
@@ -110,6 +114,7 @@ class App extends React.Component {
 						setTimeout(() => {
 							cookies.set('email', data.email);
 							cookies.set('name', data.username);
+							cookies.set('userPassword', data.password);
 							cookies.set('workerid', '1');
 							cookies.set('works', 23476);
 							this.setState({ isLoad: false })
@@ -237,6 +242,7 @@ class App extends React.Component {
 
 					{isSignup && ( <Card>
 							<CardBody className="padding-20 font-weight-bold">
+								{this.state.errorMessage !== '' ? <div className="error" style={{ textAlign: 'center', color: 'red' }}><i class="fa fa-check" aria-hidden="true"></i> {this.state.errorMessage}</div> : ''}
 								<h3>Create account</h3>
 								<br />
 								<div className="form-group">
@@ -286,7 +292,7 @@ class App extends React.Component {
 						{verifySignup && ( <Card>
 							<CardBody className="padding-20 font-weight-bold">
 								{/* <h3>Verification</h3> */}
-								{this.state.errorMessage !== '' ? <div className="success" style={{ textAlign: 'center', color: 'red' }}><i class="fa fa-check" aria-hidden="true"></i> {this.state.errorMessage}</div> : ''}
+								{this.state.errorMessage !== '' ? <div className="error" style={{ textAlign: 'center', color: 'red' }}><i class="fa fa-check" aria-hidden="true"></i> {this.state.errorMessage}</div> : ''}
 								<div className="form-group">
 									<label>Verify your email address</label>
 									<input name="signupCode" type="text" className="form-control" onChange={this.onChange} value={this.state.signupCode} />

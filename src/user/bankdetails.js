@@ -8,6 +8,8 @@ import axios from '../API.js'
 import { validateEmail, clear, validateFields, customValidation } from '../common.js'
 import Header from '../templates/landing/commonheader'
 import Footer from '../templates/landing/commonfooter'
+
+import { Auth } from 'aws-amplify';
 const cookies = new Cookies();
 
 class App extends React.Component {
@@ -49,7 +51,8 @@ class App extends React.Component {
 					setTimeout(() => {
 						this.setState({ isLoad: false })
 						if (this.props.location.state.id)
-							window.location.replace('/allhits')
+							this.signin()
+							//window.location.replace('/allhits');
 						else this.props.history.push("/addsmallamount")
 					}, 3000)
 				this.setState({ successMsg: 'Congrats! Your bank account details added successfully!' })
@@ -58,6 +61,42 @@ class App extends React.Component {
 			})
 		}
 	}
+
+	signin = () => {
+		Auth.signIn({
+			username: String(cookies.get('email')),
+			password : cookies.get('userPassword')
+		}).then((result) => {
+			 console.log("after login",result);
+			 window.location.replace('/allhits');
+			// axios.post("/login", { username: data.username, password: data.password }).then(res => res.data).then(res => {
+			// 	if (res.status === 'success') {
+			// 		cookies.set('id', res.data.userid);
+			// 		cookies.set('email', data.username);
+			// 		cookies.set('name', res.data.name);
+			// 		cookies.set('workerid', res.data.workerid);
+			// 		cookies.set('works', 23476);
+			// 		cookies.set('work1', 34589);
+			// 		cookies.set('work2', 29574);
+			// 		setTimeout(() => {
+			// 			this.setState({ isLoad: false })
+			// 			window.location.replace('/allhits')
+			// 		}, 2000);
+			// 	}
+			// 	else {
+			// 		alert('Invalid Username & Password!')
+			// 		this.setState({ isLoad: false })
+			// 	}
+			// })
+		}, error => {
+			console.log("login error:",error);
+			this.setState({
+				isLoad: false,
+				errorMessage: error.message !== '' ? error.message : 'Something went wrong!',
+			});
+		});
+	};
+
 	render() {
 		let res;
 		let load = (<>

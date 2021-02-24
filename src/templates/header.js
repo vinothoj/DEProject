@@ -41,6 +41,7 @@ class Nav extends React.Component {
 
 					<div className="col-6" style={{background:'white'}}><span className="mr-2 float-right">Hello, {this.state.name} | <a href="/" onClick={()=>{
 						cookies.remove('email');
+						cookies.remove('userPassword');
 						Auth.signOut();
 					}}>Sign Out</a></span></div>
 				</div>
